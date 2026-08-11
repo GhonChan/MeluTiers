@@ -235,10 +235,10 @@ h1 span {
   background: rgba(255,255,255,.06);
 }
 .tier-1 { color: #ffcc00; background: rgba(139,92,246,.16); }
-.tier-2 { color: #c7c7c7; background: rgba(59,130,246,.12); }
+.tier-2 { color: #ffffff; background: e68e01; }
 .tier-3 { color: #d5a77b; background: rgba(180,120,80,.10); }
-.tier-4 { color: #ffffff; background: e68e01; }
-.tier-5 { color: #ffffff; background: e68e01; }
+.tier-4 { color: #c7c7c7; background: rgba(59,130,246,.12); }
+.tier-5 { color: #c7c7c7; background: rgba(59,130,246,.12); }
 .tier-none { color: #414754; background: transparent; }
 .kit-cell { text-align: center; }
 .kit-cell .tier { min-width: 48px; }
