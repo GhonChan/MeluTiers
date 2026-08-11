@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap');
 
 :root {
   --bg: #08090c;
@@ -20,7 +20,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: Inter, system-ui, sans-serif;
+  font-family: "Noto Sans JP", Inter, system-ui, sans-serif;
   min-height: 100vh;
 }
 button, input { font: inherit; }
@@ -92,14 +92,27 @@ main { width: min(1500px, 90vw); margin: auto; }
   padding: 70px 0 45px;
 }
 .eyebrow { color: var(--accent-2); font: 700 11px/1 JetBrains Mono, monospace; letter-spacing: .18em; }
-h1 { font-size: clamp(42px, 6vw, 76px); line-height: .98; letter-spacing: -.055em; margin: 18px 0; }
+h1 {
+  font-size: clamp(52px, 7vw, 88px);
+  line-height: .98;
+  letter-spacing: -.055em;
+  margin: 18px 0;
+  font-weight: 800;
+}
 h1 span {
   background: linear-gradient(90deg, #fff, #9d8cff);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
-.hero-copy { max-width: 620px; color: var(--muted); line-height: 1.8; }
+.hero-copy {
+  max-width: 620px;
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
 .hero-stat { min-width: 190px; text-align: right; }
 .stat-number { font-size: 64px; font-weight: 800; letter-spacing: -.07em; }
 .stat-label { color: var(--muted); font: 700 10px JetBrains Mono, monospace; letter-spacing: .15em; }
