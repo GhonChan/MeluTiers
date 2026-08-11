@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JPTIERS — Discord PvP Rankings</title>
+  <meta name="description" content="Minecraft PvP tier rankings powered by Discord roles.">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <header class="topbar">
+    <a class="brand" href="/">
+      <span class="brand-mark">JP</span>
+      <span>
+        <strong>JPTIERS</strong>
+        <small>DISCORD POWERED RANKINGS</small>
+      </span>
+    </a>
+
+    <div class="top-actions">
+      <button id="refreshBtn" class="ghost-btn">↻ Refresh</button>
+      <button id="menuBtn" class="menu-btn">☰</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">MINECRAFT PVP TIER RANKINGS</p>
+        <h1>Discordで決まる、<br><span>あなたのPvP Tier。</span></h1>
+        <p class="hero-copy">
+          DiscordサーバーのTierロールを自動取得し、各KitのTierとOverallを一覧化します。
+        </p>
+      </div>
+
+      <div class="hero-stat">
+        <div class="stat-number" id="playerCount">—</div>
+        <div class="stat-label">RANKED PLAYERS</div>
+      </div>
+    </section>
+
+    <section class="search-panel">
+      <div class="search-wrap">
+        <span>⌕</span>
+        <input id="searchInput" type="search" placeholder="Search players..." autocomplete="off">
+      </div>
+      <div class="kit-filter" id="kitFilter"></div>
+    </section>
+
+    <section class="table-card">
+      <div class="table-head">
+        <div>#</div>
+        <div>PLAYER</div>
+        <div class="overall-heading">OVERALL</div>
+        <div class="kit-headings" id="kitHeadings"></div>
+      </div>
+      <div id="rankingRows"></div>
+    </section>
+
+    <div id="status" class="status"></div>
+  </main>
+
+  <footer>
+    <span>© 2026 JPTIERS</span>
+    <span>Powered by Discord Roles</span>
+  </footer>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-backdrop" data-close></div>
+    <article class="profile-modal">
+      <button class="modal-close" data-close>×</button>
+      <div id="profileContent"></div>
+    </article>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
