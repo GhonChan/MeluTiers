@@ -1,3 +1,13 @@
+function getKitFromHash() {
+  const match = window.location.hash.match(/^#\/kit\/([^/]+)$/);
+
+  if (!match) {
+    return "all";
+  }
+
+  return match[1];
+}
+
 const state = {
   data: null,
   query: "",
@@ -51,13 +61,17 @@ function renderKitFilters() {
     )
   ].join("");
 
-  el.querySelectorAll(".kit-chip").forEach(btn => {
-    btn.onclick = () => {
-      state.kit = btn.dataset.kit;
-      render();
-    };
-  });
-}
+el.querySelectorAll(".kit-chip").forEach(btn => {
+  btn.onclick = () => {
+    const kit = btn.dataset.kit;
+
+    if (kit === "all") {
+      window.location.hash = "";
+    } else {
+      window.location.hash = `/kit/${kit}`;
+    }
+  };
+});}
 
 function renderHeadings() {
   $("#kitHeadings").innerHTML = state.data.kits.map(k => `
@@ -69,45 +83,241 @@ function renderHeadings() {
 }
 
 function renderRows() {
-  const players = visiblePlayers();
   const el = $("#rankingRows");
+  const players = visiblePlayers();
 
-  el.innerHTML = players.map((p, index) => `
-    <div class="ranking-row">
-      <div class="rank">${String(index + 1).padStart(2, "0")}</div>
-      <div class="player" data-player="${p.id}">
-        <img class="avatar" src="${escapeHtml(p.avatar)}" alt="">
-        <div class="player-name">
-          <strong>${escapeHtml(p.username)}</strong>
-          ${p.globalName && p.globalName !== p.username
-            ? `<small>${escapeHtml(p.globalName)}</small>`
-            : `<small>Discord</small>`}
+  // ALLの場合は今まで通りの表を表示
+  if (state.kit === "all") {
+
+    el.innerHTML = players.map((p, index) => `
+      <div class="ranking-row">
+        <div class="rank">${String(index + 1).padStart(2, "0")}</div>
+
+        <div class="player" data-player="${p.id}">
+          <img class="avatar" src="${escapeHtml(p.avatar)}" alt="">
+
+          <div class="player-name">
+            <strong>${escapeHtml(p.username)}</strong>
+
+            ${p.globalName && p.globalName !== p.username
+              ? `<small>${escapeHtml(p.globalName)}</small>`
+              : `<small>Discord</small>`
+            }
+          </div>
         </div>
+
+        <div class="overall">
+          ${overallBadge(p)}
+        </div>
+
+        ${state.data.kits.map(k => `
+          <div class="kit-cell">
+            ${tierBadge(p.tiers[k.key])}
+          </div>
+        `).join("")}
+
       </div>
-      <div class="overall">${overallBadge(p)}</div>
-      ${state.data.kits.map(k => `
-        <div class="kit-cell">${tierBadge(p.tiers[k.key])}</div>
+    `).join("");
+
+    attachPlayerEvents();
+
+    $("#playerCount").textContent = players.length;
+
+    return;
+  }
+
+
+  // 選択されているKitを取得
+  const kit = state.data.kits.find(k => k.key === state.kit);
+
+  if (!kit) {
+    el.innerHTML = `
+      <div style="padding:40px;text-align:center;color:#666">
+        Kit not found.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  // Tierごとにプレイヤーを分類
+  const tiers = {
+    1: { high: [], low: [] },
+    2: { high: [], low: [] },
+    3: { high: [], low: [] },
+    4: { high: [], low: [] },
+    5: { high: [], low: [] }
+  };
+
+
+  players.forEach(player => {
+
+    const tier = player.tiers[kit.key];
+
+    if (!tier) return;
+
+    // 例: HT3
+    const match = tier.match(/^(H|L)T([1-5])$/);
+
+    if (!match) return;
+
+    const type = match[1] === "H" ? "high" : "low";
+    const level = Number(match[2]);
+
+    tiers[level][type].push(player);
+  });
+
+
+  // Tier 1 ～ Tier 5 を描画
+  el.innerHTML = `
+    <div class="tier-board">
+
+      ${[1, 2, 3, 4, 5].map(level => `
+
+        <div class="tier-column tier-column-${level}">
+
+          <div class="tier-column-header">
+
+            <h2>TIER ${level}</h2>
+
+            <span class="tier-player-count">
+              ${tiers[level].high.length + tiers[level].low.length} Players
+            </span>
+
+          </div>
+
+
+          ${tiers[level].high.length ? `
+
+            <div class="tier-section">
+
+              <div class="tier-section-title high">
+                HIGH
+              </div>
+
+              <div class="tier-player-list">
+
+                ${tiers[level].high.map(player =>
+                  tierPlayerCard(player, kit.key)
+                ).join("")}
+
+              </div>
+
+            </div>
+
+          ` : ""}
+
+
+          ${tiers[level].low.length ? `
+
+            <div class="tier-section">
+
+              <div class="tier-section-title low">
+                LOW
+              </div>
+
+              <div class="tier-player-list">
+
+                ${tiers[level].low.map(player =>
+                  tierPlayerCard(player, kit.key)
+                ).join("")}
+
+              </div>
+
+            </div>
+
+          ` : ""}
+
+
+          ${!tiers[level].high.length && !tiers[level].low.length ? `
+
+            <div class="tier-empty">
+              No players
+            </div>
+
+          ` : ""}
+
+        </div>
+
       `).join("")}
-    </div>
-  `).join("") || `
-    <div style="padding:40px;text-align:center;color:#666">
-      No players found.
+
     </div>
   `;
 
-  el.querySelectorAll(".player").forEach(node => {
-    node.onclick = () => openProfile(node.dataset.player);
-  });
+
+  attachPlayerEvents();
 
   $("#playerCount").textContent = players.length;
 }
 
+function tierPlayerCard(player, kitKey) {
+
+  const tier = player.tiers[kitKey];
+
+  return `
+    <div class="tier-player-card player" data-player="${player.id}">
+
+      <img
+        class="avatar"
+        src="${escapeHtml(player.avatar)}"
+        alt=""
+      >
+
+      <div class="tier-player-info">
+
+        <strong>
+          ${escapeHtml(player.username)}
+        </strong>
+
+        <small>
+          ${escapeHtml(tier)}
+        </small>
+
+      </div>
+
+    </div>
+  `;
+}
+
+function attachPlayerEvents() {
+
+  document.querySelectorAll(".player").forEach(node => {
+
+    node.onclick = () => {
+      openProfile(node.dataset.player);
+    };
+
+  });
+
+}
+
 function render() {
   renderKitFilters();
-  renderHeadings();
-  renderRows();
+
+  const tableHead = document.querySelector(".table-head");
+
+  if (state.kit === "all") {
+    // ALLページ
+    tableHead.style.display = "";
+
+    $("#kitHeadings").style.display = "";
+    $("#rankingRows").style.display = "";
+
+    renderHeadings();
+    renderRows();
+
+  } else {
+    // Kit別ページ
+    tableHead.style.display = "none";
+
+    $("#rankingRows").style.display = "";
+
+    renderRows();
+  }
 
   const d = new Date(state.data.updatedAt);
+
   $("#status").textContent =
     `Updated ${d.toLocaleString("ja-JP")} · ${state.data.players.length} ranked players`;
 }
@@ -176,5 +386,9 @@ $("#searchInput").addEventListener("input", (event) => {
 });
 
 $("#refreshBtn").onclick = () => load(true);
-
+window.addEventListener("hashchange", () => {
+  state.kit = getKitFromHash();
+  render();
+});
+state.kit = getKitFromHash();
 load();

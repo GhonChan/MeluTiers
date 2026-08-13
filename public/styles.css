@@ -25,12 +25,34 @@
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: "MinecraftHMC", sans-serif;
   min-height: 100vh;
+
+  background:
+    linear-gradient(rgba(5, 8, 15, 0.75), rgba(5, 8, 15, 0.75)),
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    url("/images/background.png");
+
+  background-size:
+    cover,
+    80px 80px,
+    80px 80px,
+    cover;
+
+  background-position:
+    center,
+    center,
+    center,
+    center;
+
+  background-repeat:
+    no-repeat,
+    repeat,
+    repeat,
+    no-repeat;
+
+  background-attachment: fixed;
 }
-button, input { font: inherit; }
 
 .bg-grid {
   position: fixed;
@@ -318,4 +340,177 @@ footer {
   display: inline-block;
   font: 800 22px JetBrains Mono, monospace;
   color: #f2c94c;
+}
+
+/* =========================
+   TIER BOARD
+========================= */
+
+.tier-board {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(220px, 1fr));
+  gap: 16px;
+
+  padding: 20px;
+  overflow-x: auto;
+}
+
+
+.tier-column {
+  min-width: 220px;
+
+  background: rgba(18, 24, 35, 0.92);
+
+  border: 1px solid #263244;
+  border-radius: 16px;
+
+  padding: 12px;
+}
+
+
+.tier-column-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+
+  border-bottom: 1px solid #2a3545;
+}
+
+
+.tier-column-header h2 {
+  margin: 0;
+
+  font-size: 20px;
+  letter-spacing: 0.05em;
+}
+
+
+.tier-player-count {
+  padding: 5px 10px;
+
+  border-radius: 999px;
+
+  background: #202938;
+  color: #8f9aae;
+
+  font-size: 11px;
+}
+
+
+.tier-section {
+  margin-bottom: 18px;
+}
+
+
+.tier-section-title {
+  display: inline-block;
+
+  padding: 5px 9px;
+  margin-bottom: 8px;
+
+  border-radius: 5px;
+
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+}
+
+
+.tier-section-title.high {
+  background: #382326;
+  color: #ff8888;
+}
+
+
+.tier-section-title.low {
+  background: #173047;
+  color: #80bfff;
+}
+
+
+.tier-player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+
+.tier-player-card {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 10px;
+
+  border-radius: 10px;
+
+  background: #151b25;
+
+  border: 1px solid #253042;
+
+  cursor: pointer;
+
+  transition: 0.15s;
+}
+
+
+.tier-player-card:hover {
+  transform: translateY(-2px);
+
+  background: #1b2330;
+}
+
+
+.tier-player-info {
+  display: flex;
+
+  flex-direction: column;
+}
+
+
+.tier-player-info strong {
+  font-size: 13px;
+}
+
+
+.tier-player-info small {
+  margin-top: 2px;
+
+  font-size: 10px;
+
+  color: #8b95a7;
+}
+
+
+.tier-empty {
+  padding: 25px 10px;
+
+  text-align: center;
+
+  color: #586174;
+
+  font-size: 12px;
+}
+
+
+@media (max-width: 1000px) {
+
+  .tier-board {
+    grid-template-columns: repeat(5, 220px);
+  }
+
+}
+
+.player-name strong {
+  color: #ffffff !important;
+}
+
+.player-name small {
+  color: #aab4c4 !important;
 }
