@@ -329,12 +329,21 @@ async function load() {
   try {
     const response = await fetch("/api/rankings");
 
-    if (!response.ok) throw new Error(data.detail || data.error || "Unknown error");
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.detail || data.error || "Unknown error"
+      );
+    }
 
     state.data = data;
+
     render();
+
   } catch (error) {
     $("#status").textContent = `Error: ${error.message}`;
+
   } finally {
     $("#refreshBtn").disabled = false;
   }
