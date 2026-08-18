@@ -322,28 +322,21 @@ function render() {
     `Updated ${d.toLocaleString("ja-JP")} · ${state.data.players.length} ranked players`;
 }
 
-async function load() {
+async function load(refresh = false) {
   $("#status").textContent = "Loading Discord ranking data…";
   $("#refreshBtn").disabled = true;
 
   try {
-    const response = await fetch("/api/rankings");
-
+    const url = refresh ? "/api/rankings?refresh=1" : "/api/rankings";
+    const response = await fetch(url);
     const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(
-        data.detail || data.error || "Unknown error"
-      );
-    }
+    if (!response.ok) throw new Error(data.detail || data.error || "Unknown error");
 
     state.data = data;
-
     render();
-
   } catch (error) {
     $("#status").textContent = `Error: ${error.message}`;
-
   } finally {
     $("#refreshBtn").disabled = false;
   }
@@ -392,7 +385,7 @@ $("#searchInput").addEventListener("input", (event) => {
   if (state.data) renderRows();
 });
 
-$("#refreshBtn").onclick = () => load();
+$("#refreshBtn").onclick = () => load(true);
 window.addEventListener("hashchange", () => {
   state.kit = getKitFromHash();
   render();
